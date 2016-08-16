@@ -36,7 +36,7 @@
 package ${target.javaPackageFromFolder($TEST_SRC)};
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -63,10 +63,12 @@ import ${ROOT_PKG}.test.${ref}FactoryForTest;
 #end
 
 //--- Services 
-import ${ROOT_PKG}.business.service.${entity.name}Service;
+## import ${ROOT_PKG}.business.service.${entity.name}Service;
+import ${ROOT_PKG}.persistence.${entity.name}Persistence;
 #foreach( $ref in $referencedEntities )
 #if ( $ref != ${entity.name} )## to avoid multiple imports for the same service
-import ${ROOT_PKG}.business.service.${ref}Service;
+## import ${ROOT_PKG}.business.service.${ref}Service;
+import ${ROOT_PKG}.persistence.${ref}Persistence;
 #end
 #end
 
@@ -98,7 +100,8 @@ public class ${entity.name}ControllerTest {
 	@InjectMocks
 	private ${entity.name}Controller ${fn.uncapitalize($entity.name)}Controller;
 	@Mock
-	private ${entity.name}Service ${fn.uncapitalize($entity.name)}Service;
+##	private ${entity.name}Service ${fn.uncapitalize($entity.name)}Service;
+	private ${entity.name}Persistence ${fn.uncapitalize($entity.name)}Service;
 	@Mock
 	private MessageHelper messageHelper;
 	@Mock
@@ -106,7 +109,8 @@ public class ${entity.name}ControllerTest {
 #foreach( $ref in $referencedEntities )
 #if ( $ref != ${entity.name} )## to avoid multiple declarations for the same service
 	@Mock
-	private ${ref}Service ${fn.uncapitalize(${ref})}Service; // Injected by Spring
+##	private ${ref}Service ${fn.uncapitalize(${ref})}Service; // Injected by Spring
+	private ${ref}Persistence ${fn.uncapitalize(${ref})}Service; // Injected by Spring
 #end
 #end
 
@@ -163,9 +167,12 @@ public class ${entity.name}ControllerTest {
 		
 		Map<String,?> modelMap = model.asMap();
 		
-#foreach( $attr in $entity.keyAttributes )
-		assertNull(((${entity.name})modelMap.get("${fn.uncapitalize($entity.name)}")).${attr.getter}());
-#end
+## #foreach( $attr in $entity.keyAttributes )
+##		assertNull(((${entity.name})modelMap.get("${fn.uncapitalize($entity.name)}")).${attr.getter}());
+## #end
+		$entity.name ${fn.uncapitalize($entity.name)} = ($entity.name)modelMap.get("${fn.uncapitalize($entity.name)}");
+		assertNotNull( ${fn.uncapitalize($entity.name)} );
+
 		assertEquals("create", modelMap.get("mode"));
 		assertEquals("/${fn.uncapitalize($entity.name)}/create", modelMap.get("saveAction"));
 		
