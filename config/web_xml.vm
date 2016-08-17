@@ -6,6 +6,7 @@
 	<display-name>to.be.defined</display-name>
 	
 	<!-- Spring IOC context -->
+<!--
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath*:/META-INF/spring/applicationContext.xml</param-value>
@@ -13,7 +14,8 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-	
+-->
+
 	<!-- CORS Filter -->
 <!--
 	<filter>
@@ -92,6 +94,7 @@
         <session-timeout>10</session-timeout>
     </session-config>
     
+<!--
     <error-page>
         <exception-type>java.lang.Exception</exception-type>
         <location>/uncaughtException</location>
@@ -101,5 +104,5 @@
         <error-code>404</error-code>
         <location>/resourceNotFound</location>
     </error-page>
-    
+-->    
 </web-app>
