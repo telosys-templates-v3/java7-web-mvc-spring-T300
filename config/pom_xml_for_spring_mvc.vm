@@ -19,6 +19,13 @@
 
 	<dependencies>
 
+		<!-- Standard Java "inject" dependency ( JSR-330 ) -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+		</dependency>
+
 		<!-- Spring MVC -->
  		<dependency>
 			<groupId>org.springframework</groupId>
