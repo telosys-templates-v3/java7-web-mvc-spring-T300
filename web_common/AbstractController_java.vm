@@ -156,4 +156,17 @@ public abstract class AbstractController {
 		return "/" + this.entityName + "/form/" + encodeUrlPathSegments(httpServletRequest, idParts );
 	}
 
+	protected String keyToString(Object ... objects) {
+		String s = "" ;
+		int i = 0 ;
+		for ( Object o : objects ) {
+			if ( i > 0 ) {
+				s = s + "|" ;
+			}
+			s = s + o ;
+			i++ ;
+		}
+		return s ;
+	}
+
 }

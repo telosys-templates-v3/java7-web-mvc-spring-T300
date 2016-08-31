@@ -54,8 +54,10 @@
 #set($listOfItemsVarName = "" ) 
 #end
 *# 
-#if( $field.isReferencingAnotherEntity() )
-#set($listOfItemsVarName = "listOf${field.referencedEntityType}Items" ) ## If many, use the 1st one
+## #if( $field.isReferencingAnotherEntity() )
+#if( $field.isFKSimple() )
+## #set($listOfItemsVarName = "listOf${field.referencedEntityType}Items" ) ## If many, use the 1st one
+#set($listOfItemsVarName = "listOf${field.referencedEntityName}Items" ) ## If many, use the 1st one
 #else
 #set($listOfItemsVarName = "" ) 
 #end

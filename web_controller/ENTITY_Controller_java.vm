@@ -1,4 +1,5 @@
 ## #set( $tools = $loader.newInstance("Tools") )
+#set( $recordClass = "${entity.name}Record" )
 #set( $uncapitalizedEntityName = $fn.uncapitalize($entity.name) )
 ## --- Primary Key arguments by getters, e.g. "review.getCustomerCode(), review.getBookId()"
 #set( $pkElementsGetters = $fn.argumentsListWithGetter($uncapitalizedEntityName, $entity.keyAttributes) )
@@ -58,10 +59,12 @@ import ${ROOT_PKG}.web.common.Message;
 import ${ROOT_PKG}.web.common.MessageType;
 
 //--- Entities
-import ${ENTITY_PKG}.${entity.name};
+## import ${ENTITY_PKG}.${entity.name};
+import ${ROOT_PKG}.record.${entity.name}Record;
 #foreach( $ref in $referencedEntities )
 #if ( $ref != ${entity.name} )## to avoid multiple imports for the same entity
-import ${ENTITY_PKG}.$ref;
+## import ${ENTITY_PKG}.$ref;
+import ${ROOT_PKG}.record.${ref}Record;
 #end
 #end
 
@@ -128,9 +131,9 @@ public class ${entity.name}Controller extends AbstractController {
 	 * @param model
 	 */
 	private void populateListOf${ref}Items(Model model) {
-		List<${ref}> list = ${fn.uncapitalize(${ref})}Service.findAll();
+		List<${ref}Record> list = ${fn.uncapitalize(${ref})}Service.findAll();
 		List<${ref}ListItem> items = new LinkedList<${ref}ListItem>();
-		for ( ${ref} $fn.uncapitalize(${ref}) : list ) {
+		for ( ${ref}Record $fn.uncapitalize(${ref}) : list ) {
 			items.add(new ${ref}ListItem( $fn.uncapitalize(${ref}) ) );
 		}
 		model.addAttribute("listOf${ref}Items", items ) ;
@@ -143,7 +146,7 @@ public class ${entity.name}Controller extends AbstractController {
 	 * @param model
 	 * @param $uncapitalizedEntityName
 	 */
-	private void populateModel(Model model, ${entity.name} $uncapitalizedEntityName, FormMode formMode) {
+	private void populateModel(Model model, ${recordClass} $uncapitalizedEntityName, FormMode formMode) {
 		//--- Main entity
 		model.addAttribute(MAIN_ENTITY_NAME, $uncapitalizedEntityName);
 		if ( formMode == FormMode.CREATE ) {
@@ -175,7 +178,7 @@ public class ${entity.name}Controller extends AbstractController {
 	@RequestMapping()
 	public String list(Model model) {
 		log("Action 'list'");
-		List<${entity.name}> list = ${uncapitalizedEntityName}Service.findAll();
+		List<${recordClass}> list = ${uncapitalizedEntityName}Service.findAll();
 		model.addAttribute(MAIN_LIST_NAME, list);		
 		return JSP_LIST;
 	}
@@ -189,7 +192,7 @@ public class ${entity.name}Controller extends AbstractController {
 	public String formForCreate(Model model) {
 		log("Action 'formForCreate'");
 		//--- Populates the model with a new instance
-		${entity.name} ${uncapitalizedEntityName} = new ${entity.name}();	
+		${recordClass} ${uncapitalizedEntityName} = new ${recordClass}();	
 		populateModel( model, ${uncapitalizedEntityName}, FormMode.CREATE);
 		return JSP_FORM;
 	}
@@ -206,7 +209,7 @@ public class ${entity.name}Controller extends AbstractController {
 	public String formForUpdate(Model model, ${pkPathVariables} ) {
 		log("Action 'formForUpdate'");
 		//--- Search the entity by its primary key and stores it in the model 
-		${entity.name} ${uncapitalizedEntityName} = ${uncapitalizedEntityName}Service.findById(${pkElementsVariables});
+		${recordClass} ${uncapitalizedEntityName} = ${uncapitalizedEntityName}Service.findById(${pkElementsVariables});
 		populateModel( model, ${uncapitalizedEntityName}, FormMode.UPDATE);		
 		return JSP_FORM;
 	}
@@ -222,12 +225,13 @@ public class ${entity.name}Controller extends AbstractController {
 	 * @return
 	 */
 	@RequestMapping(value = "/create" ) // GET or POST
-	public String create(${entity.name} ${uncapitalizedEntityName}, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+	public String create(${recordClass} ${uncapitalizedEntityName}, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
 		log("Action 'create'");
 		try {
 			if (!bindingResult.hasErrors()) {
-				${entity.name} ${uncapitalizedEntityName}Created = ${uncapitalizedEntityName}Service.create(${uncapitalizedEntityName}); 
-				model.addAttribute(MAIN_ENTITY_NAME, ${uncapitalizedEntityName}Created);
+				${recordClass} recordCreated = ${uncapitalizedEntityName}Service.create(${uncapitalizedEntityName}); 
+				log("${entity.name} created : " + recordCreated );
+				model.addAttribute(MAIN_ENTITY_NAME, recordCreated);
 
 				//---
 				messageHelper.addMessage(redirectAttributes, new Message(MessageType.SUCCESS,"save.ok"));
@@ -255,13 +259,14 @@ public class ${entity.name}Controller extends AbstractController {
 	 * @return
 	 */
 	@RequestMapping(value = "/update" ) // GET or POST
-	public String update(${entity.name} ${uncapitalizedEntityName}, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+	public String update(${recordClass} ${uncapitalizedEntityName}, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
 		log("Action 'update'");
 		try {
 			if (!bindingResult.hasErrors()) {
 				//--- Perform database operations
-				${entity.name} ${uncapitalizedEntityName}Saved = ${uncapitalizedEntityName}Service.update(${uncapitalizedEntityName});
-				model.addAttribute(MAIN_ENTITY_NAME, ${uncapitalizedEntityName}Saved);
+				${recordClass} recordUpdated = ${uncapitalizedEntityName}Service.update(${uncapitalizedEntityName});
+				log("${entity.name} updated : " + recordUpdated );
+				model.addAttribute(MAIN_ENTITY_NAME, recordUpdated);
 				//--- Set the result message
 				messageHelper.addMessage(redirectAttributes, new Message(MessageType.SUCCESS,"save.ok"));
 				log("Action 'update' : update done - redirect");
@@ -293,6 +298,7 @@ public class ${entity.name}Controller extends AbstractController {
 		log("Action 'delete'" );
 		try {
 			${uncapitalizedEntityName}Service.delete( ${pkElementsVariables} );
+			log("${entity.name} deleted. Key : " + keyToString(${pkElementsVariables}) );
 			//--- Set the result message
 			messageHelper.addMessage(redirectAttributes, new Message(MessageType.SUCCESS,"delete.ok"));	
 		} catch(Exception e) {
