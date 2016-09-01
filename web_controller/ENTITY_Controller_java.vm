@@ -191,9 +191,13 @@ public class ${entity.name}Controller extends AbstractController {
 	@RequestMapping("/form")
 	public String formForCreate(Model model) {
 		log("Action 'formForCreate'");
-		//--- Populates the model with a new instance
+		//--- New record instance (it will be used to initialize the web form fields ) 
 		${recordClass} ${uncapitalizedEntityName} = new ${recordClass}();	
+		//--- Initialize the instance here if necessary...
+		// ${uncapitalizedEntityName}.setXxxx("XX");
+		//--- Populates the model with the new instance
 		populateModel( model, ${uncapitalizedEntityName}, FormMode.CREATE);
+		//--- Redirect to the 'FORM VIEW' ( JSP )
 		return JSP_FORM;
 	}
 
@@ -208,9 +212,11 @@ public class ${entity.name}Controller extends AbstractController {
 	@RequestMapping(value = "/form/${pkPath}")
 	public String formForUpdate(Model model, ${pkPathVariables} ) {
 		log("Action 'formForUpdate'");
-		//--- Search the entity by its primary key and stores it in the model 
+		//--- Search the entity by its primary key
 		${recordClass} ${uncapitalizedEntityName} = ${uncapitalizedEntityName}Service.findById(${pkElementsVariables});
+		//--- Populates the model with the instance
 		populateModel( model, ${uncapitalizedEntityName}, FormMode.UPDATE);		
+		//--- Redirect to the 'FORM VIEW' ( JSP )
 		return JSP_FORM;
 	}
 
@@ -298,7 +304,7 @@ public class ${entity.name}Controller extends AbstractController {
 		log("Action 'delete'" );
 		try {
 			${uncapitalizedEntityName}Service.delete( ${pkElementsVariables} );
-			log("${entity.name} deleted. Key : " + keyToString(${pkElementsVariables}) );
+			log("${entity.name} deleted. Key : " + toString(${pkElementsVariables}) );
 			//--- Set the result message
 			messageHelper.addMessage(redirectAttributes, new Message(MessageType.SUCCESS,"delete.ok"));	
 		} catch(Exception e) {

@@ -156,7 +156,12 @@ public abstract class AbstractController {
 		return "/" + this.entityName + "/form/" + encodeUrlPathSegments(httpServletRequest, idParts );
 	}
 
-	protected String keyToString(Object ... objects) {
+	/**
+	 * Concatenates the given objects in a string
+	 * @param objects
+	 * @return
+	 */
+	protected String toString(Object ... objects) {
 		String s = "" ;
 		int i = 0 ;
 		for ( Object o : objects ) {
