@@ -28,7 +28,7 @@
 ## #set( $referencedEntities = $tools.referencedEntityTypes($entity, $entity.attributes) )## All referenced entities (PK and NON PK)
 ## #set( $referencedNonPKEntities = $tools.referencedEntityTypes($entity, $entity.nonKeyAttributes) )## Entities referenced by NON PK fields
 #set( $referencedEntities = $entity.referencedEntityTypes() )## All referenced entities (PK and NON PK)
-#set( $referencedNonPKEntities = $entity.referencedEntityTypes($entity.nonKeyAttributes) )## Entities referenced by NON PK fields
+## #set( $referencedNonPKEntities = $entity.referencedEntityTypes($entity.nonKeyAttributes) )## Entities referenced by NON PK fields
 ## -----------------------------------------------------------------------------------------------------------------------------
 /*
  * Created on $today.date ( Time $today.time )
@@ -126,6 +126,7 @@ public class ${entity.name}Controller extends AbstractController {
 	// Spring MVC model management
 	//--------------------------------------------------------------------------------------
 #foreach( $ref in $referencedEntities )
+#*
 	/**
 	 * Populates the combo-box "items" for the referenced entity "$ref"
 	 * @param model
@@ -138,7 +139,16 @@ public class ${entity.name}Controller extends AbstractController {
 		}
 		model.addAttribute("listOf${ref}Items", items ) ;
 	}
-
+*#
+	private List<${ref}ListItem> getListOf${ref}Items() {
+		List<${ref}Record> list = ${fn.uncapitalize(${ref})}Service.findAll();
+		List<${ref}ListItem> items = new LinkedList<${ref}ListItem>();
+		for ( ${ref}Record $fn.uncapitalize(${ref}) : list ) {
+			items.add(new ${ref}ListItem( $fn.uncapitalize(${ref}) ) );
+		}
+		//model.addAttribute("listOf${ref}Items", items ) ;
+		return items ;
+	}
 #end
 
 	/**
@@ -153,18 +163,22 @@ public class ${entity.name}Controller extends AbstractController {
 			model.addAttribute(MODE, MODE_CREATE); // The form is in "create" mode
 			model.addAttribute(SAVE_ACTION, SAVE_ACTION_CREATE); 			
 			//--- Other data useful in this screen in "create" mode (all fields)
-#foreach( $ref in $referencedEntities )
-			populateListOf${ref}Items(model);
-#end
+## #foreach( $ref in $referencedEntities )
+##			populateListOf${ref}Items(model);
+## #end
 		}
 		else if ( formMode == FormMode.UPDATE ) {
 			model.addAttribute(MODE, MODE_UPDATE); // The form is in "update" mode
 			model.addAttribute(SAVE_ACTION, SAVE_ACTION_UPDATE); 			
 			//--- Other data useful in this screen in "update" mode (only non-pk fields)
-#foreach( $ref in $referencedNonPKEntities )
-			populateListOf${ref}Items(model);
-#end
+## #foreach( $ref in $referencedNonPKEntities )
+##			populateListOf${ref}Items(model);
+## #end
 		}
+#foreach( $ref in $referencedEntities )
+		// populateListOf${ref}Items(model);
+		model.addAttribute("listOf${ref}Items", getListOf${ref}Items() ) ;
+#end
 	}
 
 	//--------------------------------------------------------------------------------------

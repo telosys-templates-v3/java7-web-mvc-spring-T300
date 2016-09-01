@@ -1,4 +1,6 @@
 #set( $uncapitalizedEntityName = $fn.uncapitalize($entity.name) )
+#set( $recordClass =  ${entity.name} + "Record"  )
+#*
 #if( $entity.hasCompositePrimaryKey() )
 #set( $entityKeyType = ${entity.name} + "EntityKey" )
 #set( $entityKeyName = $fn.uncapitalize($entity.name) + "EntityKey" )
@@ -6,8 +8,9 @@
 #set( $entityKeyType = ${entity.keyAttributes[0].formattedType(0)} )
 #set( $entityKeyName = ${entity.keyAttributes[0].formattedName(0)} )
 #end
+*#
 ## --- Primary Key arguments by getters, e.g. "review.getCustomerCode(), review.get${entity.name}Id()"
-#set( $pkElementsGetters = $fn.argumentsListWithGetter($uncapitalizedEntityName, $entity.keyAttributes) )
+## #set( $pkElementsGetters = $fn.argumentsListWithGetter($uncapitalizedEntityName, $entity.keyAttributes) )
 ## --- Primary Key arguments, e.g. "customerCode, ${fn.uncapitalize($entity.name)}Id"
 #set( $pkElementsVariables = $fn.argumentsList($entity.keyAttributes) )
 ## --- Primary Key request path, e.g. "{customerCode}/{${fn.uncapitalize($entity.name)}Id}"
@@ -49,7 +52,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 //--- Entities
-import ${ENTITY_PKG}.${entity.name};
+## import ${ENTITY_PKG}.${entity.name};
+import ${ROOT_PKG}.record.${recordClass};
 #foreach( $ref in $referencedEntities )
 #if ( $ref != ${entity.name} )## to avoid multiple imports for the same entity
 import ${ENTITY_PKG}.$ref;

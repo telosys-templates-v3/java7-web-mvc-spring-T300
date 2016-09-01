@@ -21,12 +21,12 @@
  	<!-- Where to search the persistence services implementations -->
  	<context:component-scan base-package="${ROOT_PKG}.persistence.impl.fake" />
 
-<!--  	
 	<mvc:annotation-driven />
- -->
-	<mvc:annotation-driven conversion-service="applicationConversionService"/>
+<!--  	
+ 	<mvc:annotation-driven conversion-service="applicationConversionService"/>
 	<bean id="applicationConversionService" class="org.demo.web.convert.ConversionServiceFactoryBean"/>
- 	
+ -->
+	
  	<!-- Path for static resources  -->
  <!-- 
  	<mvc:resources mapping="/static/**"  location="/static/" />
