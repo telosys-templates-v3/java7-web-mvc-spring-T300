@@ -29,14 +29,18 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
+/**
+ * Abstract Spring MVC controller used as 'super class' by all entities controllers  
+ * 
+ * @author Telosys Tools Generator
+ *
+ */
 public abstract class AbstractController {
 	
 	protected static final String MODE        = "mode";
 	protected static final String MODE_CREATE = "create";
 	protected static final String MODE_UPDATE = "update";
 	
-//	protected static final String CREATE_ACTION = "createAction" ;
-//	protected static final String UPDATE_ACTION = "updateAction" ;
 	protected static final String SAVE_ACTION = "saveAction" ;
 	
 	private static final String DATE_FORMAT_PATTERN = "date_format_pattern";
@@ -97,36 +101,10 @@ public abstract class AbstractController {
 		for ( String name : names ) {
 			logger.info(" . '" + name + "' : " + session.getAttribute(name) );
 		}
-	}	
+	}
+	
 	private static final String URI_SEPARATOR = "/";
 	
-	protected String encodeUrlPathSegments(HttpServletRequest httpServletRequest, Object... pathSegments) {
-		//--- get character encoding
-		String characterEncoding = httpServletRequest.getCharacterEncoding();
-		if (characterEncoding == null) {
-			characterEncoding = WebUtils.DEFAULT_CHARACTER_ENCODING;
-		}
-
-		//--- encode N segments
-		StringBuffer sb = new StringBuffer();
-		int n = 0 ;
-		for (Object segment : pathSegments) {
-			n++ ;
-			if (n > 1) { 
-				sb.append(URI_SEPARATOR);
-			}
-			//--- encode 1 segment
-			try {
-				String encodedSegment = UriUtils.encodePathSegment(segment.toString(), characterEncoding);
-				sb.append(encodedSegment);
-			} catch (UnsupportedEncodingException uee) {
-				throw new RuntimeException("encodePathSegment error", uee);
-			}
-
-			//sb.append(this.encodeUrlPathSegment(httpServletRequest, segment.toString()));
-		}
-		return sb.toString();
-	}
 	
 	/**
 	 * Returns "redirect:/entityName" 
@@ -154,6 +132,45 @@ public abstract class AbstractController {
 	 */
 	protected String getFormURL(HttpServletRequest httpServletRequest, Object... idParts) {
 		return "/" + this.entityName + "/form/" + encodeUrlPathSegments(httpServletRequest, idParts );
+	}
+
+	private String encodeUrlPathSegments(HttpServletRequest httpServletRequest, Object... pathSegments) {
+		//--- get character encoding
+		String characterEncoding = httpServletRequest.getCharacterEncoding();
+		if (characterEncoding == null) {
+			characterEncoding = WebUtils.DEFAULT_CHARACTER_ENCODING;
+		}
+
+		//--- encode N segments
+		StringBuffer sb = new StringBuffer();
+		int n = 0 ;
+		for (Object segment : pathSegments) {
+			n++ ;
+			if (n > 1) { 
+				sb.append(URI_SEPARATOR);
+			}
+			//--- encode 1 segment
+			sb.append( encodeSegment(segment, characterEncoding) ) ;
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * Encodes the given segment object (returns "" if the given segment is null)
+	 * @param segment
+	 * @param characterEncoding
+	 * @return
+	 */
+	private String encodeSegment(Object segment, String characterEncoding) {
+		String encodedSegment = "" ;
+		if ( segment != null ) {
+			try {
+				encodedSegment = UriUtils.encodePathSegment(segment.toString(), characterEncoding);
+			} catch (UnsupportedEncodingException uee) {
+				throw new RuntimeException("encodePathSegment error (UnsupportedEncodingException)", uee);
+			}
+		}
+		return encodedSegment ;
 	}
 
 	/**

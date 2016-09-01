@@ -43,7 +43,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-//import javax.validation.Valid;
+import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -238,14 +238,14 @@ public class ${entity.name}Controller extends AbstractController {
 	 * 'CREATE' action processing. <br>
 	 * This action is based on the 'Post/Redirect/Get (PRG)' pattern, so it ends by 'http redirect'<br>
 	 * @param ${uncapitalizedEntityName}  entity to be created
-	 * @param bindingResult Spring MVC binding result
+	 * @param bindingResult Spring MVC binding result (to retrieve validation errors)
 	 * @param model Spring MVC model
 	 * @param redirectAttributes Spring MVC redirect attributes
 	 * @param httpServletRequest
 	 * @return
 	 */
 	@RequestMapping(value = "/create" ) // GET or POST
-	public String create(${recordClass} ${uncapitalizedEntityName}, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+	public String create(@Valid ${recordClass} ${uncapitalizedEntityName}, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
 		log("Action 'create'");
 		try {
 			if (!bindingResult.hasErrors()) {
@@ -272,14 +272,14 @@ public class ${entity.name}Controller extends AbstractController {
 	 * 'UPDATE' action processing. <br>
 	 * This action is based on the 'Post/Redirect/Get (PRG)' pattern, so it ends by 'http redirect'<br>
 	 * @param ${uncapitalizedEntityName}  entity to be updated
-	 * @param bindingResult Spring MVC binding result
+	 * @param bindingResult Spring MVC binding result (to retrieve validation errors)
 	 * @param model Spring MVC model
 	 * @param redirectAttributes Spring MVC redirect attributes
 	 * @param httpServletRequest
 	 * @return
 	 */
 	@RequestMapping(value = "/update" ) // GET or POST
-	public String update(${recordClass} ${uncapitalizedEntityName}, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+	public String update(@Valid ${recordClass} ${uncapitalizedEntityName}, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
 		log("Action 'update'");
 		try {
 			if (!bindingResult.hasErrors()) {
