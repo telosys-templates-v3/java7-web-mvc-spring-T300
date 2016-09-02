@@ -23,6 +23,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -82,6 +85,10 @@ public abstract class AbstractController {
 		return customDateEditor;
 	}
 
+	//-----------------------------------------------------------------------------------------------
+	// LOG
+	//-----------------------------------------------------------------------------------------------
+
 	protected void log(String msg) {
 		logger.info(msg);
 	}
@@ -103,6 +110,24 @@ public abstract class AbstractController {
 		}
 	}
 	
+	protected void logBindingErrors(BindingResult bindingResult) {
+		log( "BindingResult : " + bindingResult.getErrorCount() + " error(s)" );
+		if ( bindingResult.hasFieldErrors() ) {
+			log( bindingResult.getFieldErrorCount() + " field error(s) : " );
+			for ( FieldError error : bindingResult.getFieldErrors() ) {
+				log(" . " + error.getObjectName() + "." +  error.getField() + " - " + error.getCode() + " : " + error.getDefaultMessage() );
+			}
+		}
+		if ( bindingResult.hasGlobalErrors() ) {
+			log( bindingResult.getGlobalErrorCount() + " global error(s) : " );
+			for ( ObjectError error : bindingResult.getGlobalErrors() ) {
+				log(" . " + error.toString());
+			}
+		}
+	}
+
+	//-----------------------------------------------------------------------------------------------
+
 	private static final String URI_SEPARATOR = "/";
 	
 	

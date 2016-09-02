@@ -257,6 +257,8 @@ public class ${entity.name}Controller extends AbstractController {
 				messageHelper.addMessage(redirectAttributes, new Message(MessageType.SUCCESS,"save.ok"));
 				return redirectToForm(httpServletRequest, $pkElementsGetters );
 			} else {
+				log("Action 'create' : binding error(s) " );
+				logBindingErrors(bindingResult);
 				populateModel( model, ${uncapitalizedEntityName}, FormMode.CREATE);
 				return JSP_FORM;
 			}
@@ -293,6 +295,7 @@ public class ${entity.name}Controller extends AbstractController {
 				return redirectToForm(httpServletRequest, $pkElementsGetters);
 			} else {
 				log("Action 'update' : binding errors");
+				logBindingErrors(bindingResult);
 				populateModel( model, ${uncapitalizedEntityName}, FormMode.UPDATE);
 				return JSP_FORM;
 			}
