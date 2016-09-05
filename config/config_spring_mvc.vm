@@ -20,6 +20,9 @@
 
  	<!-- Where to search the persistence services implementations -->
  	<context:component-scan base-package="${ROOT_PKG}.persistence.impl.fake" />
+ 	<!-- 
+ 	<context:component-scan base-package="${ROOT_PKG}.persistence.impl.jdbc" />
+ 	 -->
 
 	<mvc:annotation-driven />
 <!--  	
