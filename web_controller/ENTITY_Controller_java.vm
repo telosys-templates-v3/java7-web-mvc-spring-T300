@@ -286,9 +286,9 @@ public class ${entity.name}Controller extends AbstractController {
 		try {
 			if (!bindingResult.hasErrors()) {
 				//--- Perform database operations
-				${recordClass} recordUpdated = ${uncapitalizedEntityName}Service.update(${uncapitalizedEntityName});
-				log("${entity.name} updated : " + recordUpdated );
-				model.addAttribute(MAIN_ENTITY_NAME, recordUpdated);
+				boolean updated = ${uncapitalizedEntityName}Service.update(${uncapitalizedEntityName});
+				log("${entity.name} updated : result = " + updated );
+				model.addAttribute(MAIN_ENTITY_NAME, ${uncapitalizedEntityName});
 				//--- Set the result message
 				messageHelper.addMessage(redirectAttributes, new Message(MessageType.SUCCESS,"save.ok"));
 				log("Action 'update' : update done - redirect");
@@ -320,8 +320,8 @@ public class ${entity.name}Controller extends AbstractController {
 	public String delete(RedirectAttributes redirectAttributes, ${pkPathVariables}) {
 		log("Action 'delete'" );
 		try {
-			${uncapitalizedEntityName}Service.delete( ${pkElementsVariables} );
-			log("${entity.name} deleted. Key : " + toString(${pkElementsVariables}) );
+			boolean deleted = ${uncapitalizedEntityName}Service.deleteById( ${pkElementsVariables} );
+			log("${entity.name} deleted. Key : " + toString(${pkElementsVariables}) + " result = " + deleted );
 			//--- Set the result message
 			messageHelper.addMessage(redirectAttributes, new Message(MessageType.SUCCESS,"delete.ok"));	
 		} catch(Exception e) {
