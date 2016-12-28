@@ -1,4 +1,6 @@
-## #set( $tools = $loader.newInstance("Tools") )
+##
+#parse("../include/packages_variables.vm")
+##
 #set( $recordClass = "${entity.name}Record" )
 #set( $uncapitalizedEntityName = $fn.uncapitalize($entity.name) )
 ## --- Primary Key arguments by getters, e.g. "review.getCustomerCode(), review.getBookId()"
@@ -21,8 +23,6 @@
 #end
 #set( $pkPathVariables = "${pkPathVariables}@PathVariable(${QUOT}${attribute.name}${QUOT}) $attribute.type $attribute.name" )
 #end
-## // ${DOLLAR}pkPath          = "$pkPath"
-## // ${DOLLAR}pkPathVariables = "$pkPathVariables"
 ##
 ## --- Referenced entities (e.g. "Book", "Country", "Author", ... )
 ## #set( $referencedEntities = $tools.referencedEntityTypes($entity, $entity.attributes) )## All referenced entities (PK and NON PK)
@@ -53,18 +53,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 //--- Common classes
-import ${ROOT_PKG}.web.common.AbstractController;
-import ${ROOT_PKG}.web.common.FormMode;
-import ${ROOT_PKG}.web.common.Message;
-import ${ROOT_PKG}.web.common.MessageType;
+import ${webCommonsPackage}.AbstractController;
+import ${webCommonsPackage}.FormMode;
+import ${webCommonsPackage}.Message;
+import ${webCommonsPackage}.MessageType;
 
 //--- Entities
-## import ${ENTITY_PKG}.${entity.name};
-import ${ROOT_PKG}.record.${entity.name}Record;
+import ${recordPackage}.${entity.name}Record;
 #foreach( $ref in $referencedEntities )
 #if ( $ref != ${entity.name} )## to avoid multiple imports for the same entity
-## import ${ENTITY_PKG}.$ref;
-import ${ROOT_PKG}.record.${ref}Record;
+import ${recordPackage}.${ref}Record;
 #end
 #end
 
@@ -80,7 +78,7 @@ import ${ROOT_PKG}.persistence.${ref}Persistence;
 //--- List Items 
 #end
 #foreach( $ref in $referencedEntities )
-import ${ROOT_PKG}.web.listitem.${ref}ListItem;
+import ${recordListItemPackage}.${ref}ListItem;
 #end
 
 /**
